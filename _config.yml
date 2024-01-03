@@ -1,6 +1,6 @@
 title: andhikadananugraha
 author: andhikadananugraha
-#email: andhikadananugraha@gmail.com
+email: andhikadananugraha@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
   This is my blog. As a learner i need to keep my thecnical notes.
   Hope it will be useful. This blog containts topics such 
@@ -12,8 +12,8 @@ show_excerpts: true # set to true to show excerpts on the homepage
 sass:
   sass_dir: _sass
 plainwhite:
-  name: andhikadananugraha
-  tagline: Cloud Engineer
+  name: Andhika Dana Nugraha
+  tagline: DevOps Engineer
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
 
@@ -21,10 +21,7 @@ plainwhite:
   social_links:
     twitter: 
     github:  andhikadananugraha
-    linkedIn: in/andhikadananugraha
-    #facebook : andhikadananugraha
-    #instagram : andhikadananugraha
-    #telegram : andhikadn11
+    linkedIn: in/andhikadananugrahad
     rss: rss
     # dribbble: jekyll
     # facebook: jekyll

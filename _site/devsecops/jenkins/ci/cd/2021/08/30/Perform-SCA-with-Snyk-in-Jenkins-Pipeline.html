@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Perform SCA with Snyk in Jenkins Pipeline</title>
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Perform SCA with Snyk in Jenkins Pipeline | andhikadananugraha</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Perform SCA with Snyk in Jenkins Pipeline" />
+<meta name="author" content="andhikadananugraha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Snyk : tool scanner untuk menganalisa tingkat keamanan code Snyk Language Support : https://support.snyk.io/hc/en-us/articles/360020352437-Language-support-summary" />
+<meta property="og:description" content="Snyk : tool scanner untuk menganalisa tingkat keamanan code Snyk Language Support : https://support.snyk.io/hc/en-us/articles/360020352437-Language-support-summary" />
+<link rel="canonical" href="http://localhost:4000/devsecops/jenkins/ci/cd/2021/08/30/Perform-SCA-with-Snyk-in-Jenkins-Pipeline.html" />
+<meta property="og:url" content="http://localhost:4000/devsecops/jenkins/ci/cd/2021/08/30/Perform-SCA-with-Snyk-in-Jenkins-Pipeline.html" />
+<meta property="og:site_name" content="andhikadananugraha" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-30T18:20:00+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Perform SCA with Snyk in Jenkins Pipeline" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"andhikadananugraha"},"dateModified":"2021-08-30T18:20:00+07:00","datePublished":"2021-08-30T18:20:00+07:00","description":"Snyk : tool scanner untuk menganalisa tingkat keamanan code Snyk Language Support : https://support.snyk.io/hc/en-us/articles/360020352437-Language-support-summary","headline":"Perform SCA with Snyk in Jenkins Pipeline","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/devsecops/jenkins/ci/cd/2021/08/30/Perform-SCA-with-Snyk-in-Jenkins-Pipeline.html"},"url":"http://localhost:4000/devsecops/jenkins/ci/cd/2021/08/30/Perform-SCA-with-Snyk-in-Jenkins-Pipeline.html"}</script>
+<!-- End Jekyll SEO tag -->
+</head>
+  <body>
+    <main class="container">
+      <section class="about">
+        <a href="/"><img src="/assets/portfolio.png" alt="andhikadananugraha"></a>
+        <h2 id="title">
+          <a href="/">andhikadananugraha</a>
+        </h2>
+        <p class="tagline">Cloud Engineer</p>
+        <ul class="social"><a href="https://github.com/andhikadananugraha">
+              <li>
+                <i class="icon-github-circled"></i>
+              </li>
+            </a><a href="https://www.linkedin.com/in/aliefdikhsan">
+              <li>
+                <i class="icon-linkedin-squared"></i>
+              </li>
+            </a></ul><p>&copy;
+          2024</p>
+      </section>
+      <section class="content">
+        <div class="post-container">
+  <a class="post-link" href="/devsecops/jenkins/ci/cd/2021/08/30/Perform-SCA-with-Snyk-in-Jenkins-Pipeline.html">
+    <h2 class="post-title">Perform SCA with Snyk in Jenkins Pipeline</h2>
+  </a>
+  <div class="post-meta">
+    <ul class="post-categories"><li>devsecops</li><li>jenkins</li><li>ci/cd</li></ul>
+    <div class="post-date"><i class="icon-calendar"></i>Aug 30, 2021</div>
+  </div>
+  <div class="post">
+    <p>Snyk : tool scanner untuk menganalisa tingkat keamanan code</p>
+<blockquote>
+  <p>Snyk Language Support : https://support.snyk.io/hc/en-us/articles/360020352437-Language-support-summary</p>
+</blockquote>
+
+<h2 id="instalasi-dan-konfigurasi-snyk-plugin-di-jenkins">Instalasi dan konfigurasi Snyk Plugin di Jenkins</h2>
+<ol>
+  <li>Signup Snyk dengan menggunakan akun github</li>
+  <li>Install Snyk Plugin di jenkins : Manage Jenkins -&gt; Manage Plugins -&gt; Available -&gt; Snyk Security Plugin -&gt; Install and Restart</li>
+  <li>Manage Jenkins -&gt; Global Tools Configuration -&gt; Snyk Installation -&gt; Add Snyk<br />
+<img src="/images/Snyk-1.png" alt="image" /></li>
+  <li>Nama bebas dan unik</li>
+  <li>Pastikan Install Automatically dicentang</li>
+  <li>Update Policy Interval adalah interval snyk untuk memeriksa update</li>
+  <li>Save</li>
+  <li>Ambil auth token dari akun snyk : https://app.snyk.io/account &gt; General &gt; Auth Token &gt; Click to View</li>
+  <li>Buat kredensial snyk di Jenkins
+<img src="/images/Snyk-2.png" alt="image" /></li>
+  <li>Save</li>
+</ol>
+
+<h2 id="integrasi-snyk-dengan-pipeline">Integrasi Snyk dengan Pipeline</h2>
+<ol>
+  <li>Dashboard &gt; book-pipeline &gt; Pipeline Syntax &gt; Generate Syntax
+<img src="/images/Snyk-3.png" alt="image" /></li>
+  <li>Pada syntax tersebut severity vulnerabilitynya adalah medium or above. Maka jika ada vulnerability dengan severity medium atau high pipeline akan dibreak</li>
+  <li>Jenkinsfile : https://raw.githubusercontent.com/andhikadananugraha/books/master/jenkins/Jenkinsfile-book-snyk</li>
+  <li>Output Pipeline Monitor
+<img src="/images/Snyk-4.png" alt="image" /></li>
+  <li>Snyk juga akan mengirim notif via email
+<img src="/images/Snyk-5.png" alt="image" /></li>
+  <li>Snyk Report juga akan muncul di Jenkins Dashboard<br />
+<img src="/images/Snyk-6.png" alt="image" /></li>
+  <li>Vulnerabilities issue dapat dilihat di dashboard snyk<br />
+<img src="/images/Snyk-7.png" alt="image" /></li>
+  <li>Snyk juga akan mengirimkan Pull Request untuk memperbaiki code
+<img src="/images/Snyk-8.png" alt="image" /></li>
+</ol>
+
+<h2 id="open-pull-request-dari-snyk">Open Pull Request dari Snyk</h2>
+<p>jika github terintegrasi dengan snyk, snyk dapat memberi rekomendasi perubahan kode dengan mengirim pull request</p>
+<ol>
+  <li>Snyk Dashboard</li>
+  <li>Vulnerable Projects &gt; klik Fix this vulnerabilities</li>
+  <li>Create Pull Request</li>
+  <li>Open Fix PR<br />
+<img src="/images/Snyk-9.png" alt="image" /></li>
+  <li>Cek repo github<br />
+<img src="/images/Snyk-10.png" alt="image" /></li>
+</ol>
+
+  </div></div>
+
+      </section>
+    </main></body>
+</html>

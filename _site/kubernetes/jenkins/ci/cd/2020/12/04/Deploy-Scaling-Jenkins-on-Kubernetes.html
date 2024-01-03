@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster</title>
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster | andhikadananugraha</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster" />
+<meta name="author" content="andhikadananugraha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The goal of this project is running Jenkins jobs in kubernetes pods. Environment : Kubernetes 1.19 NFS Storage Jenkins 2.249.3 Create Working Directory mkdir /home/ubuntu/jenkins-k8s cd /home/ubuntu/jenkins-k8s Create Dockerfile Jenkins Master ``` vi Dockerfile-jenkins-master" />
+<meta property="og:description" content="The goal of this project is running Jenkins jobs in kubernetes pods. Environment : Kubernetes 1.19 NFS Storage Jenkins 2.249.3 Create Working Directory mkdir /home/ubuntu/jenkins-k8s cd /home/ubuntu/jenkins-k8s Create Dockerfile Jenkins Master ``` vi Dockerfile-jenkins-master" />
+<link rel="canonical" href="http://localhost:4000/kubernetes/jenkins/ci/cd/2020/12/04/Deploy-Scaling-Jenkins-on-Kubernetes.html" />
+<meta property="og:url" content="http://localhost:4000/kubernetes/jenkins/ci/cd/2020/12/04/Deploy-Scaling-Jenkins-on-Kubernetes.html" />
+<meta property="og:site_name" content="andhikadananugraha" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-12-04T20:38:00+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"andhikadananugraha"},"dateModified":"2020-12-04T20:38:00+07:00","datePublished":"2020-12-04T20:38:00+07:00","description":"The goal of this project is running Jenkins jobs in kubernetes pods. Environment : Kubernetes 1.19 NFS Storage Jenkins 2.249.3 Create Working Directory mkdir /home/ubuntu/jenkins-k8s cd /home/ubuntu/jenkins-k8s Create Dockerfile Jenkins Master ``` vi Dockerfile-jenkins-master","headline":"Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/kubernetes/jenkins/ci/cd/2020/12/04/Deploy-Scaling-Jenkins-on-Kubernetes.html"},"url":"http://localhost:4000/kubernetes/jenkins/ci/cd/2020/12/04/Deploy-Scaling-Jenkins-on-Kubernetes.html"}</script>
+<!-- End Jekyll SEO tag -->
+</head>
+  <body>
+    <main class="container">
+      <section class="about">
+        <a href="/"><img src="/assets/portfolio.png" alt="andhikadananugraha"></a>
+        <h2 id="title">
+          <a href="/">andhikadananugraha</a>
+        </h2>
+        <p class="tagline">Cloud Engineer</p>
+        <ul class="social"><a href="https://github.com/andhikadananugraha">
+              <li>
+                <i class="icon-github-circled"></i>
+              </li>
+            </a><a href="https://www.linkedin.com/in/aliefdikhsan">
+              <li>
+                <i class="icon-linkedin-squared"></i>
+              </li>
+            </a></ul><p>&copy;
+          2024</p>
+      </section>
+      <section class="content">
+        <div class="post-container">
+  <a class="post-link" href="/kubernetes/jenkins/ci/cd/2020/12/04/Deploy-Scaling-Jenkins-on-Kubernetes.html">
+    <h2 class="post-title">Deploy Scaling Jenkins Master-Slave on Kubernetes Cluster</h2>
+  </a>
+  <div class="post-meta">
+    <ul class="post-categories"><li>kubernetes</li><li>jenkins</li><li>ci/cd</li></ul>
+    <div class="post-date"><i class="icon-calendar"></i>Dec 4, 2020</div>
+  </div>
+  <div class="post">
+    <p>The goal of this project is running Jenkins jobs in kubernetes pods.<br />
+Environment :</p>
+<ul>
+  <li>Kubernetes 1.19</li>
+  <li>NFS Storage</li>
+  <li>Jenkins 2.249.3</li>
+</ul>
+
+<h3 id="create-working-directory">Create Working Directory</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir /home/ubuntu/jenkins-k8s
+cd /home/ubuntu/jenkins-k8s
+</code></pre></div></div>
+<h2 id="create-dockerfile-jenkins-master">Create Dockerfile Jenkins Master</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi Dockerfile-jenkins-master 
+
+FROM jenkins/jenkins:lts
+
+# Plugins for better UX (not mandatory)
+RUN /usr/local/bin/install-plugins.sh ansicolor
+RUN /usr/local/bin/install-plugins.sh greenballs
+
+# Plugin for scaling jenkins slaves
+RUN /usr/local/bin/install-plugins.sh kubernetes
+
+USER jenkins
+</code></pre></div></div>
+
+<h2 id="build-and-push-new-master-image-to-docker-registry">Build and Push New Master Image to Docker Registry</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo docker build -f Dockerfile-jenkins-master -t andhikadananugraha/jenkins-master-scaling .
+sudo docker push andhikadananugraha/jenkins-master-scaling:latest
+</code></pre></div></div>
+
+<h2 id="create-pvc-for-jenkins-master">Create PVC for jenkins master</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi jenkins-volume.yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+spec:
+  storageClassName: managed-nfs-storage # your storageclass name
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+---
+kubectl apply -f jenkins-volume.yaml
+</code></pre></div></div>
+
+<h2 id="create-jenkins-master-deployment">Create Jenkins Master Deployment</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi deployment.yml 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: jenkins
+  name: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Djenkins.install.runSetupWizard=false
+        name: jenkins
+        image: andhikadananugraha/jenkins-master-scaling
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http-port
+          protocol: TCP
+        - containerPort: 50000
+          name: jnlp-port
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+      volumes:
+      - name: jenkins-home
+        persistentVolumeClaim:
+           claimName: jenkins-pvc
+</code></pre></div></div>
+
+<h2 id="create-service-for-jenkins-master-url-and-jenkins-slave-tunnel">Create Service for Jenkins Master URL and Jenkins Slave tunnel</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi service.yml 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: jenkins
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-jnlp
+spec:
+  type: ClusterIP
+  ports:
+    - port: 50000
+      targetPort: 50000
+  selector:
+    app: jenkins
+---
+
+kubectl apply -f service.yml
+</code></pre></div></div>
+
+<h2 id="configure-cloud">Configure Cloud</h2>
+<h3 id="add-new-cloud">Add new cloud</h3>
+<blockquote>
+  <p>Manage Jenkins » Manage Nodes and Clouds » Configure Clouds » Add New Cloud » Kubernetes<br />
+The configuration looks like this.</p>
+  <h3 id="kubernetes-cluster-configuration">Kubernetes Cluster Configuration</h3>
+  <p><img src="/images/scaling-jenkins-1.png" alt="sequel pro" class="img-responsive" /><br />
+<img src="/images/scaling-jenkins-2.png" alt="sequel pro" class="img-responsive" /></p>
+  <h3 id="add-the-k8s-config-file">Add the k8s config file</h3>
+  <p><img src="/images/scaling-jenkins-3.png" alt="sequel pro" class="img-responsive" /></p>
+  <h3 id="pod-template-configuration">Pod Template Configuration</h3>
+  <p><img src="/images/scaling-jenkins-4.png" alt="sequel pro" class="img-responsive" /></p>
+</blockquote>
+
+<h3 id="setup-jenkins-master">Setup Jenkins Master</h3>
+<blockquote>
+  <p>Manage Jenkins » Manage Nodes and Clouds » Master » set <code class="language-plaintext highlighter-rouge"># of executors</code> to 0</p>
+</blockquote>
+
+<h2 id="test-freestyle-project">Test Freestyle Project</h2>
+<blockquote>
+  <p>New Item » Freestyle Project » OK<br />
+General » Check Restrict where this project can be run » Label Exp: jenkins-slave-alpine<br />
+Build triggers » Execute Shell » Command : hostname<br />
+Save<br />
+Build now</p>
+</blockquote>
+
+<h2 id="while-the-build-is-running-check-if-the-slave-pod-is-running">While the build is running check if the slave pod is running</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ubuntu@al-master1:~$ kubectl get pods
+NAME                                      READY   STATUS    RESTARTS   AGE
+jenkins-5f864c95b6-qsmmc                  1/1     Running   0          2d4h
+jenkins-slave-alpine-98rkx                2/2     Running   0          10s
+nfs-client-provisioner-6877696cb4-tzplv   1/1     Running   0          6d22h
+</code></pre></div></div>
+
+
+  </div></div>
+
+      </section>
+    </main></body>
+</html>

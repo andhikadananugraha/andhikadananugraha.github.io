@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Nginx-Ingress and Cert-Manager Issuer in Kubernetes</title>
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Nginx-Ingress and Cert-Manager Issuer in Kubernetes | andhikadananugraha</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Nginx-Ingress and Cert-Manager Issuer in Kubernetes" />
+<meta name="author" content="andhikadananugraha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Use Case : Application need to be able to be access from public. There are a bunch of application that have been deployed in kubernetes. Each application service has specific hostname that identified by domain. So, we need an ingress gateway to route each domain to particular service. In this case we are using Nginx-Ingress." />
+<meta property="og:description" content="Use Case : Application need to be able to be access from public. There are a bunch of application that have been deployed in kubernetes. Each application service has specific hostname that identified by domain. So, we need an ingress gateway to route each domain to particular service. In this case we are using Nginx-Ingress." />
+<link rel="canonical" href="http://localhost:4000/devsecops/kubernetes/2022/07/25/Cert-Manager-K8s.html" />
+<meta property="og:url" content="http://localhost:4000/devsecops/kubernetes/2022/07/25/Cert-Manager-K8s.html" />
+<meta property="og:site_name" content="andhikadananugraha" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-07-25T09:15:00+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Nginx-Ingress and Cert-Manager Issuer in Kubernetes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"andhikadananugraha"},"dateModified":"2022-07-25T09:15:00+07:00","datePublished":"2022-07-25T09:15:00+07:00","description":"Use Case : Application need to be able to be access from public. There are a bunch of application that have been deployed in kubernetes. Each application service has specific hostname that identified by domain. So, we need an ingress gateway to route each domain to particular service. In this case we are using Nginx-Ingress.","headline":"Nginx-Ingress and Cert-Manager Issuer in Kubernetes","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/devsecops/kubernetes/2022/07/25/Cert-Manager-K8s.html"},"url":"http://localhost:4000/devsecops/kubernetes/2022/07/25/Cert-Manager-K8s.html"}</script>
+<!-- End Jekyll SEO tag -->
+</head>
+  <body>
+    <main class="container">
+      <section class="about">
+        <a href="/"><img src="/assets/portfolio.png" alt="andhikadananugraha"></a>
+        <h2 id="title">
+          <a href="/">andhikadananugraha</a>
+        </h2>
+        <p class="tagline">Cloud Engineer</p>
+        <ul class="social"><a href="https://github.com/andhikadananugraha">
+              <li>
+                <i class="icon-github-circled"></i>
+              </li>
+            </a><a href="https://www.linkedin.com/in/aliefdikhsan">
+              <li>
+                <i class="icon-linkedin-squared"></i>
+              </li>
+            </a></ul><p>&copy;
+          2024</p>
+      </section>
+      <section class="content">
+        <div class="post-container">
+  <a class="post-link" href="/devsecops/kubernetes/2022/07/25/Cert-Manager-K8s.html">
+    <h2 class="post-title">Nginx-Ingress and Cert-Manager Issuer in Kubernetes</h2>
+  </a>
+  <div class="post-meta">
+    <ul class="post-categories"><li>devsecops</li><li>kubernetes</li></ul>
+    <div class="post-date"><i class="icon-calendar"></i>Jul 25, 2022</div>
+  </div>
+  <div class="post">
+    <p>Use Case :<br />
+Application need to be able to be access from public. There are a bunch of application that have been deployed in kubernetes. Each application service has specific hostname that identified by domain. So, we need an ingress gateway to route each domain to particular service. In this case we are using <a href="https://github.com/kubernetes/ingress-nginx">Nginx-Ingress</a>.</p>
+
+<p>The connection between user and server also must be a secure connection. So we need to enable TLS to be able to use HTTPS protocol.  In this case, we decided to use <a href="https://cert-manager.io/v0.14-docs">Cert-Manager</a> as certificate issuer.</p>
+
+<h2 id="nginx-ingress-deployment">Nginx-Ingress Deployment</h2>
+
+<p>Referring to the <a href="https://kubernetes.github.io/ingress-nginx/deploy/">this documentation</a>, you can simply apply this manifest to deploy Ingress-Nginx.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml
+</code></pre></div></div>
+
+<p>Check that all pods are running and create an ingress to ensure Nginx-Ingress is working properly.</p>
+
+<h2 id="cert-manager-deployment">Cert-Manager Deployment</h2>
+<blockquote>
+  <p><em>please notice that cert-manager require you to register your domain first to verify so your certificate will be valid</em></p>
+
+</blockquote>
+
+<p>Check <a href="https://cert-manager.io/v0.14-docs">this refference</a> for more details.</p>
+
+<p>Cert-Manager can be deployed by applying this manifest.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create namespace cert-manager
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.3/cert-manager.yaml
+</code></pre></div></div>
+
+<p>Check if cert-manager already running.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods -n cert-manager
+</code></pre></div></div>
+
+<p>Result will be as shown below.</p>
+
+<h3 id="create-cluster-issuer">Create Cluster Issuer</h3>
+
+<p>Cluster issuer is an issuer that can be used by all namespaces in the cluster. Below is the manifest to create cluster issuer.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat &lt;&lt;EOF &gt; cluster-issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: example@katondu.net
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+EOF
+</code></pre></div></div>
+
+<p>Apply the manifest</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f cluster-issuer.yaml
+</code></pre></div></div>
+
+<blockquote>
+  <p><em>you can also create namespace issuer instead of clusterIssuer if needed</em></p>
+
+</blockquote>
+
+<h3 id="utilize-cluster-issuer">Utilize Cluster Issuer</h3>
+
+<p>Basically, we need to define the issuer in ingress manifest so that ingress can request a valid certificate to the Cert-Manager.</p>
+
+<p>Here is the ingress for example :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-katondu-ingress
+  namespace: katondu
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - example.katondu.net
+    secretName: example-katondu-tls
+  rules:
+  - host: example.katondu.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: example-katondu
+            port:
+              number: 80
+</code></pre></div></div>
+
+<p>Please notice there are two main section :</p>
+
+<ol>
+  <li>annotations inside metadata</li>
+  <li>tls inside spec</li>
+</ol>
+
+<p>Here is the template of nginx-ingress with TLS-enabled. You can change the value inside bracket [] :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: [servicename]-ingress
+  namespace: [namespace of the service]
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - [domain name]
+    secretName: [servicename]-letsencrypt
+  rules:
+  - host: [domain name]
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: [service-name]
+            port:
+              number: [port of the service]
+</code></pre></div></div>
+
+<p>Please ensure you have create the respective domain records in Route53 before running this step</p>
+
+<p>explaination :</p>
+
+<ul>
+  <li>metadata.name = name of the ingress by using your service with ingress prefix</li>
+  <li>metadata.namespace = namespace where the service resides</li>
+  <li>metadata.annotations = you still can add more annotations but   annotations defined in this template is mandatory.</li>
+  <li>spec.tls.hosts[] = the domain name that will be used for certificate request</li>
+  <li>rules = routing configuration</li>
+</ul>
+
+  </div></div>
+
+      </section>
+    </main></body>
+</html>

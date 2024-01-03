@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Deploy Kubernetes Using Kubespray</title>
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Deploy Kubernetes Using Kubespray | andhikadananugraha</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Deploy Kubernetes Using Kubespray" />
+<meta name="author" content="andhikadananugraha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, and domain knowledge for generic OS/Kubernetes clusters configuration management tasks. (kubernetes.io) I deployed kube cluster on my kvm. Using 4 servers which 2 servers as masters and 2 workers. Clone Repo and Install Packages" />
+<meta property="og:description" content="Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, and domain knowledge for generic OS/Kubernetes clusters configuration management tasks. (kubernetes.io) I deployed kube cluster on my kvm. Using 4 servers which 2 servers as masters and 2 workers. Clone Repo and Install Packages" />
+<link rel="canonical" href="http://localhost:4000/orchestration/high-availablity/2020/11/12/Deploy-K8s-Cluster-using-Kubespray.html" />
+<meta property="og:url" content="http://localhost:4000/orchestration/high-availablity/2020/11/12/Deploy-K8s-Cluster-using-Kubespray.html" />
+<meta property="og:site_name" content="andhikadananugraha" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-12T16:00:00+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Deploy Kubernetes Using Kubespray" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"andhikadananugraha"},"dateModified":"2020-11-12T16:00:00+07:00","datePublished":"2020-11-12T16:00:00+07:00","description":"Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, and domain knowledge for generic OS/Kubernetes clusters configuration management tasks. (kubernetes.io) I deployed kube cluster on my kvm. Using 4 servers which 2 servers as masters and 2 workers. Clone Repo and Install Packages","headline":"Deploy Kubernetes Using Kubespray","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/orchestration/high-availablity/2020/11/12/Deploy-K8s-Cluster-using-Kubespray.html"},"url":"http://localhost:4000/orchestration/high-availablity/2020/11/12/Deploy-K8s-Cluster-using-Kubespray.html"}</script>
+<!-- End Jekyll SEO tag -->
+</head>
+  <body>
+    <main class="container">
+      <section class="about">
+        <a href="/"><img src="/assets/portfolio.png" alt="andhikadananugraha"></a>
+        <h2 id="title">
+          <a href="/">andhikadananugraha</a>
+        </h2>
+        <p class="tagline">Cloud Engineer</p>
+        <ul class="social"><a href="https://github.com/andhikadananugraha">
+              <li>
+                <i class="icon-github-circled"></i>
+              </li>
+            </a><a href="https://www.linkedin.com/in/aliefdikhsan">
+              <li>
+                <i class="icon-linkedin-squared"></i>
+              </li>
+            </a></ul><p>&copy;
+          2024</p>
+      </section>
+      <section class="content">
+        <div class="post-container">
+  <a class="post-link" href="/orchestration/high-availablity/2020/11/12/Deploy-K8s-Cluster-using-Kubespray.html">
+    <h2 class="post-title">Deploy Kubernetes Using Kubespray</h2>
+  </a>
+  <div class="post-meta">
+    <ul class="post-categories"><li>orchestration</li><li>high-availablity</li></ul>
+    <div class="post-date"><i class="icon-calendar"></i>Nov 12, 2020</div>
+  </div>
+  <div class="post">
+    <p>Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, and domain knowledge for generic OS/Kubernetes clusters configuration management tasks. (kubernetes.io)<br />
+I deployed kube cluster on my kvm.  Using 4 servers which 2 servers as masters and 2 workers.</p>
+
+<h2 id="clone-repo-and-install-packages">Clone Repo and Install Packages</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/kubernetes-sigs/kubespray  
+cd kubespray/  
+sudo apt-get install python3-netaddr python3-pip -y 
+sudo pip3 install -r requirements.txt
+sudo echo "net.ipv4.ip_forward=1" &gt;&gt; /etc/sysctl.conf  
+</code></pre></div></div>
+
+<h2 id="setup-inventory-file">Setup Inventory file</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cp -rfp inventory/sample inventory/cluster01  
+vi inventory/cluster01/inventory.ini 
+
+[all]
+al-master1 ansible_host=10.80.80.41
+al-master2 ansible_host=10.80.80.42
+al-worker1 ansible_host=10.80.80.43
+al-worker2 ansible_host=10.80.80.44
+
+[kube-master]
+al-master[1:2]
+
+[etcd]
+al-master[1:2]
+al-worker1
+
+[kube-node]
+al-worker[1:2]
+
+[k8s-cluster:children]
+kube-master
+kube-node
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">ansible -m ping -i inventory/cluster01/inventory.ini --become --become-user=root  all</code></p>
+
+<h2 id="setup-group-vars">Setup Group Vars</h2>
+
+<p><code class="language-plaintext highlighter-rouge">vi inventory/cluster01/group_vars/all/all.yml</code></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+etcd_data_dir: /var/lib/etcd
+etcd_kubeadm_enabled: false
+bin_dir: /usr/local/bin
+loadbalancer_apiserver_localhost: true
+loadbalancer_apiserver_type: haproxy  # valid values "nginx" or "haproxy"
+loadbalancer_apiserver_port: 6443
+loadbalancer_apiserver_healthcheck_port: 8081
+no_proxy_exclude_workers: false
+</code></pre></div></div>
+
+<h2 id="setup-network-plugin-in-k8s-clusteryaml">Setup Network plugin in k8s-cluster.yaml</h2>
+
+<p><code class="language-plaintext highlighter-rouge">vi inventory/cluster01/group_vars/k8s_cluster/k8s-cluster.yml</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+kube_network_plugin: flannel
+...
+</code></pre></div></div>
+
+<h2 id="deploy-kubernetes-cluster">Deploy Kubernetes Cluster</h2>
+<p><code class="language-plaintext highlighter-rouge">ansible-playbook -i inventory/cluster01/inventory.ini  --become --become-user=root cluster.yml</code></p>
+
+<h2 id="verify-deployment">Verify Deployment</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes  
+kubectl get pods --all-namespaces
+</code></pre></div></div>
+
+<h3 id="verify-deployment-1">Verify Deployment</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create deployment supermario-web --image=pengbai/docker-supermario --port=8080  
+kubectl expose deployment supermario-web --type=NodePort --name=supermario-web  
+kubectl get svc  
+</code></pre></div></div>
+
+<h3 id="check-on-your-browser">Check on your browser</h3>
+
+<p><code class="language-plaintext highlighter-rouge">http://{master-ip}:{NodePort}</code></p>
+
+  </div></div>
+
+      </section>
+    </main></body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>High Availablity Galera MariaDB Cluster</title>
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>High Availablity Galera MariaDB Cluster | andhikadananugraha</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="High Availablity Galera MariaDB Cluster" />
+<meta name="author" content="andhikadananugraha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Setup high availablity MariaDB Cluster. I used 2 db servers (3 is recomended) and a loadbalancer using HAProxy. +++++++++++ + HAPROXY + +++++++++++ | | ______|______ | | v v ++++++ ++++++ +DB01+ &lt;-----&gt; +DB02+ ++++++ ++++++" />
+<meta property="og:description" content="Setup high availablity MariaDB Cluster. I used 2 db servers (3 is recomended) and a loadbalancer using HAProxy. +++++++++++ + HAPROXY + +++++++++++ | | ______|______ | | v v ++++++ ++++++ +DB01+ &lt;-----&gt; +DB02+ ++++++ ++++++" />
+<link rel="canonical" href="http://localhost:4000/database/high-availablity/2020/05/15/HA-DB.html" />
+<meta property="og:url" content="http://localhost:4000/database/high-availablity/2020/05/15/HA-DB.html" />
+<meta property="og:site_name" content="andhikadananugraha" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-15T13:14:19+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="High Availablity Galera MariaDB Cluster" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"andhikadananugraha"},"dateModified":"2020-05-15T13:14:19+07:00","datePublished":"2020-05-15T13:14:19+07:00","description":"Setup high availablity MariaDB Cluster. I used 2 db servers (3 is recomended) and a loadbalancer using HAProxy. +++++++++++ + HAPROXY + +++++++++++ | | ______|______ | | v v ++++++ ++++++ +DB01+ &lt;-----&gt; +DB02+ ++++++ ++++++","headline":"High Availablity Galera MariaDB Cluster","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/database/high-availablity/2020/05/15/HA-DB.html"},"url":"http://localhost:4000/database/high-availablity/2020/05/15/HA-DB.html"}</script>
+<!-- End Jekyll SEO tag -->
+</head>
+  <body>
+    <main class="container">
+      <section class="about">
+        <a href="/"><img src="/assets/portfolio.png" alt="andhikadananugraha"></a>
+        <h2 id="title">
+          <a href="/">andhikadananugraha</a>
+        </h2>
+        <p class="tagline">Cloud Engineer</p>
+        <ul class="social"><a href="https://github.com/andhikadananugraha">
+              <li>
+                <i class="icon-github-circled"></i>
+              </li>
+            </a><a href="https://www.linkedin.com/in/aliefdikhsan">
+              <li>
+                <i class="icon-linkedin-squared"></i>
+              </li>
+            </a></ul><p>&copy;
+          2024</p>
+      </section>
+      <section class="content">
+        <div class="post-container">
+  <a class="post-link" href="/database/high-availablity/2020/05/15/HA-DB.html">
+    <h2 class="post-title">High Availablity Galera MariaDB Cluster</h2>
+  </a>
+  <div class="post-meta">
+    <ul class="post-categories"><li>database</li><li>high-availablity</li></ul>
+    <div class="post-date"><i class="icon-calendar"></i>May 15, 2020</div>
+  </div>
+  <div class="post">
+    <p>Setup high availablity MariaDB Cluster. I used 2 db servers (3 is recomended) and a loadbalancer using HAProxy.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                 +++++++++++
+                 + HAPROXY +
+                 +++++++++++
+                      |
+                      |
+                ______|______
+               |             |
+               v             v
+            ++++++         ++++++            
+            +DB01+ &lt;-----&gt; +DB02+
+            ++++++         ++++++
+</code></pre></div></div>
+
+<p>vi /etc/hosts</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+192.168.56.101 db01
+192.168.56.102 db02
+192.168.56.103 haproxy
+...
+</code></pre></div></div>
+
+<p>Install mariadb server 10.4 and galera 4 in both servers.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get update &amp;&amp; sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
+sudo add-apt-repository "deb [arch=amd64,arm64,ppc64el] http://mariadb.mirror.liquidtelecom.com/repo/10.4/ubuntu $(lsb_release -cs) main"
+apt update
+apt -y install mariadb-server -y
+mysql_secure_installation
+apt-get install mariadb-server galera-4 mariadb-client libmariadb3 mariadb-backup mariadb-common -y
+</code></pre></div></div>
+<p>Configure mariadb default character set. I used db01 as role master of the galera cluster.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>character-set-server = utf8
+collation-server = utf8_unicode_ci
+character_set_server = utf8
+</code></pre></div></div>
+<p>Create new galera configuration file. I set the bind-address to 192.168.56.101 (the server local address).<br />
+db01</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/mysql/mariadb.conf.d/galera.cnf
+...
+[mysqld]
+bind-address=192.168.56.101
+default_storage_engine=InnoDB
+binlog_format=row
+innodb_autoinc_lock_mode=2
+
+# Galera cluster configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_cluster_address="gcomm://192.168.56.101,192.168.56.102"
+wsrep_cluster_name="mariadb-galera-cluster"
+wsrep_sst_method=rsync
+
+# Cluster node configuration
+wsrep_node_address="192.168.56.101"
+wsrep_node_name="galera-db-01"
+
+</code></pre></div></div>
+<p>db02</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/mysql/mariadb.conf.d/galera.cnf
+...
+[mysqld]
+bind-address=192.168.56.102
+default_storage_engine=InnoDB
+binlog_format=row
+innodb_autoinc_lock_mode=2
+
+# Galera cluster configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_cluster_address="gcomm://192.168.56.101,192.168.56.102"
+wsrep_cluster_name="mariadb-galera-cluster"
+wsrep_sst_method=rsync
+
+# Cluster node configuration
+wsrep_node_address="192.168.56.102"
+wsrep_node_name="galera-db-02"
+</code></pre></div></div>
+
+<p>On db01 server , stop mariadb service.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop mariadb
+galera_new_cluster
+</code></pre></div></div>
+<p>check if the galera cluster is running.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@ubuntu:~# mysql -u root -p -e "show status like 'wsrep_%'"
+Enter password: 
++-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| Variable_name                 | Value                                                                                                                                          |
++-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| wsrep_local_state_uuid        | 246c31bb-9627-11ea-b0c9-43bd69f31000                                                                                                           |
+| wsrep_protocol_version        | 10                                                                                                                                             |
+| wsrep_last_committed          | 1                                                                                                                                              |
+| wsrep_replicated              | 0                                                                                                                                              |
+
+....
+</code></pre></div></div>
+<p>On db02 server, start mariadb service.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start mariadb
+</code></pre></div></div>
+<p>Check cluster size. The value should be 2 for there are 2 db servers in the cluster.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@ubuntu:~# mysql -u root -p -e "show status like 'wsrep_cluster_size'"
+Enter password: 
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| wsrep_cluster_size | 2     |
++--------------------+-------+
+</code></pre></div></div>
+<p>Check if the cluster is working properly. I created database on db01. Make sure that it was created on db02 as well</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># on db01
+mysql -uroot -p
+CREATE DATABASE db_galde;
+
+# on db02
+mysql -uroot -p
+SHOW DATABASES;
+</code></pre></div></div>
+<p>After that, i created new user on db02 and granted all privileges to the new user.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE USER 'usrgalde'@'%' IDENTIFIED BY 'qwerty';
+GRANT ALL PRIVILEGES ON db_galde.* TO 'usrgalde'@'%';
+
+# run this query on db01
+select user, password, host from mysql.user;
+</code></pre></div></div>
+
+<p>Install HAProxy Server.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get update &amp;&amp; sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+sudo apt-get install haproxy -y
+</code></pre></div></div>
+<p>Configure the haproxy to listen to port 3306 and redirect it to each servers. I used <code class="language-plaintext highlighter-rouge">leastconn</code> balance method.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/haproxy/haproxy.cfg
+...
+frontend galera_cluster_frontend
+    bind 192.168.56.103:3306
+    mode tcp
+    option tcplog
+    default_backend galera_cluster_backend
+
+backend galera_cluster_backend
+    mode tcp
+    option tcpka
+    balance leastconn
+    server db-server-01 192.168.56.101:3306  check weight 1
+    server db-server-02 192.168.56.102:3306  check weight 1
+...
+
+</code></pre></div></div>
+<p>Verify the configuration and make sure that the haproxy is listening to port 3306.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>haproxy -c -V -f /etc/haproxy/haproxy.cfg
+systemctl restart haproxy
+ss -tupln | grep 3306
+</code></pre></div></div>
+
+<p>I tried to connect to the database using Sequel Pro from my host.</p>
+<ul>
+  <li><img src="/images/sequelpro_connect.png" alt="sequel pro" class="img-responsive" />.</li>
+  <li><img src="/images/sequelpro_createtable.png" alt="sequel pro" class="img-responsive" /></li>
+</ul>
+
+<p>Create table and verify that the table is created on both db servers.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MariaDB [db_galde]&gt; show tables;
++--------------------+
+| Tables_in_db_galde |
++--------------------+
+| tb_ujicoba         |
++--------------------+
+1 row in set (0.001 sec)
+</code></pre></div></div>
+
+  </div></div>
+
+      </section>
+    </main></body>
+</html>

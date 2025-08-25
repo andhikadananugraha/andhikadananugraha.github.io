@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andhika Dana Nugraha | Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk ikon sosial media -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for a sleek look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#hero" class="text-2xl font-bold text-white hover:text-blue-500 transition-colors duration-300">
+                Andhika Dana Nugraha
+            </a>
+            <div class="hidden md:flex space-x-6 font-semibold">
+                <a href="#ringkasan" class="text-gray-300 hover:text-blue-500 transition-colors duration-300">Ringkasan</a>
+                <a href="#pengalaman" class="text-gray-300 hover:text-blue-500 transition-colors duration-300">Pengalaman</a>
+                <a href="#keahlian" class="text-gray-300 hover:text-blue-500 transition-colors duration-300">Keahlian</a>
+                <a href="#pendidikan" class="text-gray-300 hover:text-blue-500 transition-colors duration-300">Pendidikan</a>
+                <a href="#kontak" class="text-gray-300 hover:text-blue-500 transition-colors duration-300">Kontak</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 bg-opacity-90 backdrop-blur-md p-4">
+            <a href="#ringkasan" class="block py-2 text-gray-300 hover:text-blue-500">Ringkasan</a>
+            <a href="#pengalaman" class="block py-2 text-gray-300 hover:text-blue-500">Pengalaman</a>
+            <a href="#keahlian" class="block py-2 text-gray-300 hover:text-blue-500">Keahlian</a>
+            <a href="#pendidikan" class="block py-2 text-gray-300 hover:text-blue-500">Pendidikan</a>
+            <a href="#kontak" class="block py-2 text-gray-300 hover:text-blue-500">Kontak</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center">
+            <div>
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold mb-4 text-white">
+                    Andhika Dana Nugraha
+                </h1>
+                <p class="text-xl sm:text-2xl lg:text-3xl text-gray-400 mb-8">
+                    IT Enthusiasts
+                </p>
+                <p class="text-md sm:text-lg max-w-2xl mx-auto text-gray-400 mb-8">
+                    Hii, saya Andhika, dengan pengalaman kurang dari 1 tahun sebagai DevOps Engineer dan 2 tahun sebagai IT Infrastructure. Saat ini bekerja sebagai DevOps Engineer di DDB BRI.
+                </p>
+                <div class="space-x-4">
+                    <a href="#pengalaman" class="inline-block bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105">
+                        Lihat Pengalaman
+                    </a>
+                    <a href="#kontak" class="inline-block bg-transparent border-2 border-blue-600 text-blue-600 font-semibold py-3 px-8 rounded-full hover:bg-blue-600 hover:text-white transition-colors duration-300">
+                        Hubungi Saya
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="ringkasan" class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Ringkasan</h2>
+            <div class="bg-gray-800 p-6 md:p-10 rounded-xl shadow-lg">
+                <p class="text-gray-300 text-lg mb-4">
+                    Saya Andhika, dengan pengalaman kurang dari 1 tahun di bidang DevOps Engineer dan 2 tahun di bidang IT Infrastructure. Saat ini bekerja sebagai DevOps Engineer di DDB BRI. Saya mendapatkan banyak pengetahuan dari perusahaan tersebut, seperti cara mengelola tim, merencanakan, dan mengeksekusi. Saya memiliki minat untuk belajar lebih banyak tentang menjadi DevOps Engineer dan DevSecOps.
+                </p>
+                <div class="text-gray-400">
+                    <span class="font-semibold">Lokasi:</span> Jawa Tengah, Indonesia
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="pengalaman" class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Pengalaman</h2>
+            <div class="grid gap-8">
+                <!-- PT Trimegah Sekuritas -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">DevOps Engineer</h3>
+                    <p class="text-blue-500 font-semibold">PT Trimegah Sekuritas Indonesia, Tbk</p>
+                    <p class="text-gray-400 mt-2">Agustus 2023 - Sekarang (1 tahun 11 bulan)</p>
+                    <p class="text-gray-400">Jakarta Raya, Indonesia</p>
+                </div>
+                <!-- Boer Technology -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">DevOps Engineer L1 - DDB Bank Rakyat Indonesia (BRI)</h3>
+                    <p class="text-blue-500 font-semibold">Boer Technology (Btech)</p>
+                    <p class="text-gray-400 mt-2">Juli 2022 - Juli 2023 (1 tahun 1 bulan)</p>
+                    <p class="text-gray-400">Jakarta, Jakarta Raya, Indonesia</p>
+                </div>
+                <!-- PT. BSR Indonesia -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">Senior IT Infrastructure</h3>
+                    <p class="text-blue-500 font-semibold">PT. BSR Indonesia</p>
+                    <p class="text-gray-400 mt-2">Mei 2021 - Juni 2022 (1 tahun 2 bulan)</p>
+                    <p class="text-gray-400">Jakarta, Jakarta Raya, Indonesia</p>
+                </div>
+                <!-- PT. Yutaka Manufacturing Indonesia -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">Information Technology Infrastructure Specialist</h3>
+                    <p class="text-blue-500 font-semibold">PT. Yutaka Manufacturing Indonesia (Astra Group)</p>
+                    <p class="text-gray-400 mt-2">Desember 2019 - Januari 2021 (1 tahun 2 bulan)</p>
+                    <p class="text-gray-400">Provinsi Jawa Barat, Indonesia</p>
+                </div>
+                <!-- Institut Pertanian Bogor (IPB) -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">Assistant Lecturer</h3>
+                    <p class="text-blue-500 font-semibold">Institut Pertanian Bogor (IPB)</p>
+                    <p class="text-gray-400 mt-2">Agustus 2019 - Desember 2019 (5 bulan)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="keahlian" class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Keahlian Teratas</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md">DevOps</span>
+                <span class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md">Linux</span>
+                <span class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md">HTML</span>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="pendidikan" class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Pendidikan</h2>
+            <div class="grid gap-8">
+                <!-- BINUS University -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">BINUS University</h3>
+                    <p class="text-blue-500 font-semibold">Sarjana, Sistem Informasi</p>
+                    <p class="text-gray-400 mt-2">2022 - 2024</p>
+                </div>
+                <!-- IPB -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">Institut Pertanian Bogor (IPB)</h3>
+                    <p class="text-blue-500 font-semibold">Diploma, Teknik Komputer</p>
+                    <p class="text-gray-400 mt-2">2016 - 2019</p>
+                </div>
+                <!-- SHS 3 Pekalongan -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-bold text-white">SHS 3 Pekalongan</h3>
+                    <p class="text-blue-500 font-semibold">Sains</p>
+                    <p class="text-gray-400 mt-2">2013-2016</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications & Publications Section -->
+        <section class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Sertifikasi & Publikasi</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Certifications -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-white mb-4">Sertifikasi</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-300">
+                        <li>Code Generation and Optimization Using IBM Granite</li>
+                        <li>Dasar-Dasar Dukungan Teknis</li>
+                        <li>Belajar Dasar Git dengan GitHub</li>
+                        <li>Project Simple ETL with Pandas</li>
+                        <li>Belajar Jaringan Komputer untuk Pemula</li>
+                    </ul>
+                </div>
+                <!-- Publications -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-white mb-4">Publikasi</h3>
+                    <p class="text-gray-300">RANCANG BANGUN SISTEM MONITORING AUTOMATIC WEATHER STATION BERBASIS WEBSITE, WHATSAPP, EMAIL, DAN SMS GUNA MEMBERIKAN DATA AKURAT KEPADA MASYARAKAT</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="kontak" class="py-16 md:py-24">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white">Hubungi Saya</h2>
+            <div class="bg-gray-800 p-6 md:p-10 rounded-xl shadow-lg text-center">
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-12">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-mobile-alt text-blue-500 text-2xl"></i>
+                        <span class="text-lg text-gray-300">085865819394</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-envelope text-blue-500 text-2xl"></i>
+                        <a href="mailto:andhikadananugraha@gmail.com" class="text-lg text-gray-300 hover:text-blue-500 transition-colors duration-300">andhikadananugraha@gmail.com</a>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fab fa-linkedin text-blue-500 text-2xl"></i>
+                        <a href="https://www.linkedin.com/in/andhikadananugraha" target="_blank" class="text-lg text-gray-300 hover:text-blue-500 transition-colors duration-300">LinkedIn</a>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fab fa-github text-blue-500 text-2xl"></i>
+                        <a href="https://github.com/andhikadananugraha" target="_blank" class="text-lg text-gray-300 hover:text-blue-500 transition-colors duration-300">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-center py-6">
+        <p class="text-sm text-gray-500">
+            Dibuat dengan ❤️ dan Tailwind CSS
+        </p>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Hide mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
